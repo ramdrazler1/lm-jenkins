@@ -88,9 +88,9 @@ stages{
     stage('.env copy'){
       steps{
         script{   
-        sh "cp -r /home/ubuntu/.envs/lead-mgmt/Sprint/lm-api-env  /home/ubuntu/jenkins-slave/workspace/NodeJS/lead-mgmt/Sprint/lead-management-api/.env "
-        sh "cp -r /home/ubuntu/.envs/lead-mgmt/Sprint/lm-client-env  /home/ubuntu/jenkins-slave/workspace/NodeJS/lead-mgmt/Sprint/lead-management-client/.env"
-        sh "cp -r /home/ubuntu/.envs/lead-mgmt/Sprint/lm-portal-env  /home/ubuntu/jenkins-slave/workspace/NodeJS/lead-mgmt/Sprint/lead-management-user-portal/.env"    
+        sh "cp -r /home/ubuntu/.envs/lead-mgmt/Sprint/lm-api-env  /home/ubuntu/jenkins-slave/workspace/DevOps/lm-test/lead-management-api/.env "
+        sh "cp -r /home/ubuntu/.envs/lead-mgmt/Sprint/lm-client-env  /home/ubuntu/jenkins-slave/workspace/DevOps/lm-test/lead-management-client/.env"
+        sh "cp -r /home/ubuntu/.envs/lead-mgmt/Sprint/lm-portal-env  /home/ubuntu/jenkins-slave/workspace/DevOps/lm-test/lead-management-user-portal/.env"    
        }
      }
     }
@@ -139,22 +139,22 @@ stages{
     
 }//stages
 
-post {
-    success{
-      script{
-        notificationsNode.success("${BUILD_USER}", "${params.Application}", "${env.BUILD_NUMBER}", "${env.JOB_NAME}", "${env.Trigger_Branch}", "${env.dopsemail}", "${env.devemail}")
+//post {
+//    success{
+//      script{
+//        notificationsNode.success("${BUILD_USER}", "${params.Application}", "${env.BUILD_NUMBER}", "${env.JOB_NAME}", "${env.Trigger_Branch}", "${env.dopsemail}", "${env.devemail}")
 
-        slackSend channel: '#nodejs-build-alerts',color: COLOR_MAP[currentBuild.currentResult], message: notificationsNode.slacksuccess("${currentBuild.currentResult}", "${BUILD_USER}", "${params.Application}", "${env.BUILD_NUMBER}","${env.JOB_NAME}", "${env.Trigger_Branch}")
+//        slackSend channel: '#nodejs-build-alerts',color: COLOR_MAP[currentBuild.currentResult], message: notificationsNode.slacksuccess("${currentBuild.currentResult}", "${BUILD_USER}", "${params.Application}", "${env.BUILD_NUMBER}","${env.JOB_NAME}", "${env.Trigger_Branch}")
 
-      }   
-    }
-    failure{
-      script{
-        notificationsNode.failure("${BUILD_USER}", "${params.Application}", "${env.BUILD_NUMBER}", "${env.JOB_NAME}", "${env.Trigger_Branch}", "${env.dopsemail}", "${env.devemail}")
-
-        slackSend channel: '#nodejs-build-alerts', color: COLOR_MAP[currentBuild.currentResult], message: notificationsNode.slackfailure("${currentBuild.currentResult}", "${BUILD_USER}", "${params.Application}", "${env.BUILD_NUMBER}","${env.JOB_NAME}", "${env.Trigger_Branch}")
-      }   
-    }
-   } //post block
+//      }   
+//    }
+//    failure{
+//      script{
+//        notificationsNode.failure("${BUILD_USER}", "${params.Application}", "${env.BUILD_NUMBER}", "${env.JOB_NAME}", "${env.Trigger_Branch}", "${env.dopsemail}", "${env.devemail}")
+//
+//        slackSend channel: '#nodejs-build-alerts', color: COLOR_MAP[currentBuild.currentResult], message: notificationsNode.slackfailure("${currentBuild.currentResult}", "${BUILD_USER}", "${params.Application}", "${env.BUILD_NUMBER}","${env.JOB_NAME}", "${env.Trigger_Branch}")
+//      }   
+//  }
+//   } //post block
 
 } //pipeline block

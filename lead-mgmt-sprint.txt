@@ -142,26 +142,25 @@ stages{
      }
     }
 
-    stage('Docker down'){
-      steps{
-        script{
-            try {
-            sh "pwd"
-            sh"sudo docker-compose down --rmi all "
-            }catch (err){
-                echo "Docker-compose failed"
-            }
-
-          }
-        }
-    }
+//    stage('Docker down'){
+//      steps{
+//        script{
+//            try {
+//            sh "pwd"
+//            sh"sudo docker-compose down --rmi all "
+//            }catch (err){
+//                echo "Docker-compose failed"
+//            }
+//
+//          }
+//        }
+//    }
 
     stage('Docker up'){
       steps{
         script{
-          
             sh "pwd"
-            sh"sudo docker-compose up -d --build "
+            sh "sudo docker build -t ${Application.toLowerCase()}-${envType}:${tags} ./${Application} --no-cache"
           }
         }
     }

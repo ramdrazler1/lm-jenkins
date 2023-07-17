@@ -12,7 +12,7 @@ def COLOR_MAP = ['SUCCESS': '#00FF00', 'FAILURE': '#FF0000','UNSTABLE': '#FFFF00
 properties([
     parameters([
      choice(name: "AGENT", 
-      choices: ["N/A", "Nodejs-Dev"],
+      choices: ["N/A", "Build-test"],
       description: "Select your Build Environment"), 
 
       string(

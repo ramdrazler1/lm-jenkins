@@ -72,6 +72,11 @@ properties([
           ]
        ], //cascade choice   
 
+      string(
+      name: 'tags',
+      //defaultValue: "Enter Your Docker Tag Number",
+      description: "Enter Docker tag number")  
+
     ]) //parameter
 ])//options
 

@@ -128,14 +128,14 @@ stages{
         }
     }
 
-    stage('Nginx-Restart'){
-      steps{
-        script{
-            sh "pwd"
-            sh"sudo service nginx restart "
-          }
-     }
-    }
+//    stage('Nginx-Restart'){
+//      steps{
+//        script{
+//            sh "pwd"
+//            sh"sudo service nginx restart "
+//          }
+//     }
+//    }
     
 }//stages
 

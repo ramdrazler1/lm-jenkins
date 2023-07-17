@@ -156,11 +156,12 @@ stages{
 //        }
 //    }
 
-    stage('Docker up'){
+    stage('Docker Build'){
       steps{
         script{
-            sh "pwd"
+            dir("${env.WORKSPACE}"){
             sh "sudo docker build -t ${Application.toLowerCase()}:${tags} ./${Application} --no-cache"
+         }
           }
         }
     }

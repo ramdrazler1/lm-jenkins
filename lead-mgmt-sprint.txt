@@ -129,7 +129,7 @@ stages{
     stage('Run the Docker'){
       steps{
         script{
-            sh "sudo docker run -itd --name ${Application.toLowerCase()}:${tags} -p 4000:4000 ${Application.toLowerCase()}"
+            sh "sudo docker run -itd --name ${Application.toLowerCase()} -p 4000:4000 ${Application.toLowerCase()}:${tags}"
          }
           }
         }

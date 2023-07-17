@@ -25,10 +25,28 @@ properties([
       //defaultValue: "Enter Your Github Branch",
       description: "Trigger_Branch"),    
      
-      choice(
-      name: "Application", 
-      choices: ["N/A", "lead-mgmt"],
-      description: "Select your Application"), 
+      [$class: 'ChoiceParameter', 
+        choiceType: 'PT_SINGLE_SELECT', 
+        description: 'Select the ApplicationType from the Dropdown List', 
+        filterLength: 1, 
+        filterable: false, 
+        name: 'Env', 
+        script: [
+            $class: 'GroovyScript', 
+            fallbackScript: [
+                classpath: [], 
+                sandbox: false, 
+                script: 
+                    "return['Could not get The ApplicationType']"
+            ], 
+            script: [
+                classpath: [], 
+                sandbox: false, 
+                script: 
+                    "return['lead-mgmt']"
+            ]
+          ]
+      ],
 
       [$class: 'CascadeChoiceParameter', 
         choiceType: 'PT_SINGLE_SELECT', 

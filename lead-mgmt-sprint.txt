@@ -1,0 +1,160 @@
+#!groovy
+import jenkins.model.* 
+import hudson.*
+import hudson.model.*
+import groovy.json.*
+import java.text.SimpleDateFormat
+
+def date = new Date()
+today = new SimpleDateFormat("ddMMyyyy")
+def COLOR_MAP = ['SUCCESS': '#00FF00', 'FAILURE': '#FF0000','UNSTABLE': '#FFFF00', 'ABORTED': '#800000']
+
+properties([
+    parameters([
+     choice(name: "AGENT", 
+      choices: ["N/A", "Nodejs-Dev"],
+      description: "Select your Build Environment"), 
+
+      string(
+      name: 'Trigger_Repo',
+      //defaultValue: "Enter Your Github Repo",
+      description: "Trigger_Repo"),
+
+      string(
+      name: 'Trigger_Branch',
+      //defaultValue: "Enter Your Github Branch",
+      description: "Trigger_Branch"),    
+     
+      choice(
+      name: "Application", 
+      choices: ["N/A", "lead-mgmt"],
+      description: "Select your Application"), 
+
+    ]) //parameter
+])//options
+
+
+pipeline {
+    agent {
+        label params.AGENT == "any" ? "" : params.AGENT 
+    }
+    environment{
+        VERSION = "${env.BUILD_ID}"
+        job = "${env.JOB_NAME}"
+        dopsemail = "devops@spantechnologyservices.com"
+        devemail = "w9team@spantechnologyservices.com"
+        //codeLocation = "/home/ubuntu/node/lead/Sprint/"
+    }
+
+stages{
+   stage('Git Clone'){
+      steps{
+        script{
+          //r("${env.codeLocation}"){
+            sh "pwd"
+            echo "${env.Trigger_Repo}','${env.Trigger_Branch}'"
+            git credentialsId: 'githubCk', branch: "${env.Trigger_Branch}",  url: "${env.Trigger_Repo}"
+          }
+     }
+    }
+    
+/*    
+   stage('Git pull'){
+      steps{
+        script{  
+            
+            sh "pwd"
+            //echo "'${env.Trigger_Branch}', '${env.Trigger_Repo}'"
+            sh "sudo git branch"
+           // sh "sudo git pull -f origin '${env.Trigger_Branch}'"
+            }
+     }
+    }
+    stage('Docker-Prune'){
+      steps{
+        script{
+          
+            sh "pwd"
+            try {
+                sh"sudo yes| docker system prune -a "
+            }catch (err){
+                echo "Docker-Prune failed"
+            }
+        }
+     }
+    }
+*/
+
+    stage('.env copy'){
+      steps{
+        script{   
+        sh "cp -r /home/ubuntu/.envs/lead-mgmt/Sprint/lm-api-env  /home/ubuntu/jenkins-slave/workspace/NodeJS/lead-mgmt/Sprint/lead-management-api/.env "
+        sh "cp -r /home/ubuntu/.envs/lead-mgmt/Sprint/lm-client-env  /home/ubuntu/jenkins-slave/workspace/NodeJS/lead-mgmt/Sprint/lead-management-client/.env"
+        sh "cp -r /home/ubuntu/.envs/lead-mgmt/Sprint/lm-portal-env  /home/ubuntu/jenkins-slave/workspace/NodeJS/lead-mgmt/Sprint/lead-management-user-portal/.env"    
+       }
+     }
+    }
+
+    stage('Docker down'){
+      steps{
+        script{
+            try {
+            sh "pwd"
+            sh"sudo docker-compose down --rmi all "
+            }catch (err){
+                echo "Docker-compose failed"
+            }
+
+          }
+        }
+    }
+
+    stage('Docker up'){
+      steps{
+        script{
+          
+            sh "pwd"
+            sh"sudo docker-compose up -d --build "
+          }
+        }
+    }
+
+    stage('Docker-List'){
+      steps{
+        script{
+            sh "pwd"
+            sh"sudo docker ps -a"
+          }
+        }
+    }
+
+    stage('Nginx-Restart'){
+      steps{
+        script{
+            sh "pwd"
+            sh"sudo service nginx restart "
+          }
+     }
+    }
+    
+}//stages
+
+post {
+    success{
+      script{
+        notificationsNode.success("${BUILD_USER}", "${params.Application}", "${env.BUILD_NUMBER}", "${env.JOB_NAME}", "${env.Trigger_Branch}", "${env.dopsemail}", "${env.devemail}")
+
+        slackSend channel: '#nodejs-build-alerts',color: COLOR_MAP[currentBuild.currentResult], message: notificationsNode.slacksuccess("${currentBuild.currentResult}", "${BUILD_USER}", "${params.Application}", "${env.BUILD_NUMBER}","${env.JOB_NAME}", "${env.Trigger_Branch}")
+
+      }   
+    }
+    failure{
+      script{
+        notificationsNode.failure("${BUILD_USER}", "${params.Application}", "${env.BUILD_NUMBER}", "${env.JOB_NAME}", "${env.Trigger_Branch}", "${env.dopsemail}", "${env.devemail}")
+
+        slackSend channel: '#nodejs-build-alerts', color: COLOR_MAP[currentBuild.currentResult], message: notificationsNode.slackfailure("${currentBuild.currentResult}", "${BUILD_USER}", "${params.Application}", "${env.BUILD_NUMBER}","${env.JOB_NAME}", "${env.Trigger_Branch}")
+      }   
+    }
+   } //post block
+
+} //pipeline block

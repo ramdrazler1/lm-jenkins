@@ -53,7 +53,7 @@ stages{
           //r("${env.codeLocation}"){
             sh "pwd"
             echo "${env.Trigger_Repo}','${env.Trigger_Branch}'"
-            git credentialsId: 'githubCk', branch: "${env.Trigger_Branch}",  url: "${env.Trigger_Repo}"
+            git credentialsId: 'githubDops', branch: "${env.Trigger_Branch}",  url: "${env.Trigger_Repo}"
           }
      }
     }

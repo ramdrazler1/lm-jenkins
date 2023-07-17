@@ -105,32 +105,6 @@ stages{
      }
     }
     
-/*    
-   stage('Git pull'){
-      steps{
-        script{  
-            
-            sh "pwd"
-            //echo "'${env.Trigger_Branch}', '${env.Trigger_Repo}'"
-            sh "sudo git branch"
-           // sh "sudo git pull -f origin '${env.Trigger_Branch}'"
-            }
-     }
-    }
-    stage('Docker-Prune'){
-      steps{
-        script{
-          
-            sh "pwd"
-            try {
-                sh"sudo yes| docker system prune -a "
-            }catch (err){
-                echo "Docker-Prune failed"
-            }
-        }
-     }
-    }
-*/
 
     stage('.env copy'){
       steps{
@@ -142,20 +116,6 @@ stages{
      }
     }
 
-//    stage('Docker down'){
-//      steps{
-//        script{
-//            try {
-//            sh "pwd"
-//            sh"sudo docker-compose down --rmi all "
-//            }catch (err){
-//                echo "Docker-compose failed"
-//            }
-//
-//          }
-//        }
-//    }
-
     stage('Docker Build'){
       steps{
         script{
@@ -165,6 +125,15 @@ stages{
           }
         }
     }
+
+    stage('Run the Docker'){
+      steps{
+        script{
+            sh "sudo docker run -itd --name ${Application.toLowerCase()}:${tags} -p 4000:4000 ${Application.toLowerCase()}:${tags}"
+         }
+          }
+        }
+    
 
     stage('Docker-List'){
       steps{

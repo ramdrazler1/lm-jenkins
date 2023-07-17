@@ -160,7 +160,7 @@ stages{
       steps{
         script{
             sh "pwd"
-            sh "sudo docker build -t ${Application.toLowerCase()}-${envType}:${tags} ./${Application} --no-cache"
+            sh "sudo docker build -t ${Application.toLowerCase()}:${tags} ./${Application} --no-cache"
           }
         }
     }

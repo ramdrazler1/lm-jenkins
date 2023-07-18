@@ -1,0 +1,185 @@
+#!groovy
+import jenkins.model.* 
+import hudson.*
+import hudson.model.*
+import groovy.json.*
+import java.text.SimpleDateFormat
+
+def date = new Date()
+today = new SimpleDateFormat("ddMMyyyy")
+def COLOR_MAP = ['SUCCESS': '#00FF00', 'FAILURE': '#FF0000','UNSTABLE': '#FFFF00', 'ABORTED': '#800000']
+
+properties([
+    parameters([
+     choice(name: "AGENT", 
+      choices: ["N/A", "Build-test"],
+      description: "Select your Build Environment"), 
+
+      string(
+      name: 'Trigger_Repo',
+      //defaultValue: "Enter Your Github Repo",
+      description: "Trigger_Repo"),
+
+      string(
+      name: 'Trigger_Branch',
+      //defaultValue: "Enter Your Github Branch",
+      description: "Trigger_Branch"),    
+     
+      [$class: 'ChoiceParameter', 
+        choiceType: 'PT_SINGLE_SELECT', 
+        description: 'Select the ApplicationType from the Dropdown List', 
+        filterLength: 1, 
+        filterable: false, 
+        name: 'Env', 
+        script: [
+            $class: 'GroovyScript', 
+            fallbackScript: [
+                classpath: [], 
+                sandbox: false, 
+                script: 
+                    "return['Could not get The ApplicationType']"
+            ], 
+            script: [
+                classpath: [], 
+                sandbox: false, 
+                script: 
+                    "return['lead-mgmt']"
+            ]
+          ]
+      ],
+
+      [$class: 'CascadeChoiceParameter', 
+        choiceType: 'PT_SINGLE_SELECT', 
+        description: 'Select the Application from the Dropdown List',
+        name: 'Application', 
+        referencedParameters: 'Env', 
+        script: 
+            [$class: 'GroovyScript', 
+            fallbackScript: [
+                    classpath: [], 
+                    sandbox: false, 
+                    script: "return['Could not get Application from Env Param']"
+                    ], 
+            script: [
+                    classpath: [], 
+                    sandbox: false, 
+                    script: '''
+                        if(Env.equals('lead-mgmt')){
+                            return['lead-management-api', 'lead-management-client', 'lead-management-user-portal']
+                        }
+                        '''
+                ] 
+          ]
+       ], //cascade choice   
+
+      string(
+      name: 'tags',
+      //defaultValue: "Enter Your Docker Tag Number",
+      description: "Enter Docker tag number")  
+
+    ]) //parameter
+])//options
+
+
+pipeline {
+    agent {
+        label params.AGENT == "any" ? "" : params.AGENT 
+    }
+    environment{
+        VERSION = "${env.BUILD_ID}"
+        job = "${env.JOB_NAME}"
+        dopsemail = "devops@spantechnologyservices.com"
+        devemail = "w9team@spantechnologyservices.com"
+        //codeLocation = "/home/ubuntu/node/lead/Sprint/"
+    }
+
+stages{
+   stage('Git Clone'){
+      steps{
+        script{
+          //r("${env.codeLocation}"){
+            sh "pwd"
+            echo "${env.Trigger_Repo}','${env.Trigger_Branch}'"
+            git credentialsId: 'githubDops', branch: "${env.Trigger_Branch}",  url: "${env.Trigger_Repo}"
+          }
+     }
+    }
+    
+
+    stage('.env copy'){
+      steps{
+        script{   
+        sh "cp -r /home/ubuntu/.envs/lead-mgmt/Sprint/lm-api-env  /home/ubuntu/jenkins-slave/workspace/DevOps/lm-test/lead-management-api/.env "
+        sh "cp -r /home/ubuntu/.envs/lead-mgmt/Sprint/lm-client-env  /home/ubuntu/jenkins-slave/workspace/DevOps/lm-test/lead-management-client/.env"
+        sh "cp -r /home/ubuntu/.envs/lead-mgmt/Sprint/lm-portal-env  /home/ubuntu/jenkins-slave/workspace/DevOps/lm-test/lead-management-user-portal/.env"    
+       }
+     }
+    }
+
+    stage('Docker Build'){
+      steps{
+        script{
+            dir("${env.WORKSPACE}"){
+            sh "sudo docker build -t ${Application.toLowerCase()}:${tags} ./${Application} --no-cache"
+         }
+          }
+        }
+    }
+
+    stage('stop the Docker Container'){
+      steps{
+        script{
+            sh "sudo docker stop ${Application.toLowerCase()}"
+            sh "sudo docker rm ${Application.toLowerCase()}"
+         }
+          }
+        }
+
+    stage('Run the Docker'){
+      steps{
+        script{
+            sh "sudo docker run -itd --name ${Application.toLowerCase()} -p 4005:4005 ${Application.toLowerCase()}:${tags}"
+         }
+          }
+        }
+    
+
+    stage('Docker-List'){
+      steps{
+        script{
+            sh "pwd"
+            sh"sudo docker ps -a"
+          }
+        }
+    }
+
+//    stage('Nginx-Restart'){
+//      steps{
+//        script{
+//            sh "pwd"
+//            sh"sudo service nginx restart "
+//          }
+//     }
+//    }
+    
+}//stages
+
+//post {
+//    success{
+//      script{
+//        notificationsNode.success("${BUILD_USER}", "${params.Application}", "${env.BUILD_NUMBER}", "${env.JOB_NAME}", "${env.Trigger_Branch}", "${env.dopsemail}", "${env.devemail}")
+
+//        slackSend channel: '#nodejs-build-alerts',color: COLOR_MAP[currentBuild.currentResult], message: notificationsNode.slacksuccess("${currentBuild.currentResult}", "${BUILD_USER}", "${params.Application}", "${env.BUILD_NUMBER}","${env.JOB_NAME}", "${env.Trigger_Branch}")
+
+//      }   
+//    }
+//    failure{
+//      script{
+//        notificationsNode.failure("${BUILD_USER}", "${params.Application}", "${env.BUILD_NUMBER}", "${env.JOB_NAME}", "${env.Trigger_Branch}", "${env.dopsemail}", "${env.devemail}")
+//
+//        slackSend channel: '#nodejs-build-alerts', color: COLOR_MAP[currentBuild.currentResult], message: notificationsNode.slackfailure("${currentBuild.currentResult}", "${BUILD_USER}", "${params.Application}", "${env.BUILD_NUMBER}","${env.JOB_NAME}", "${env.Trigger_Branch}")
+//      }   
+//  }
+//   } //post block
+
+} //pipeline block

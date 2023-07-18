@@ -126,14 +126,7 @@ stages{
         }
     }
 
-    stage('stop the Docker Container'){
-      steps{
-        script{
-            sh "sudo docker stop ${Application.toLowerCase()}"
-            sh "sudo docker rm ${Application.toLowerCase()}"
-         }
-          }
-        }
+
 
 stage('Run the Docker') {
   steps {

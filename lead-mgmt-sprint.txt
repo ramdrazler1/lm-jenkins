@@ -106,6 +106,13 @@ stages{
      }
     }
     
+stage("Init"){
+      steps{
+        script{
+          gv = load "script.groovy"
+        }
+      }
+    }
 
     stage('.env copy'){
       steps{
@@ -127,6 +134,22 @@ stages{
         }
     }
 
+ stage("Docker_Registry_Login"){
+        steps{
+            script{
+                gv.Docker_Registry_Login()
+            }
+        }
+     }
+     stage("Push_To_Registry"){
+        steps{
+            script{
+                gv.Push_To_Registry()
+            }
+        }
+     }
+
+/*
     stage('Nexus Login'){
       steps{
           echo "Logging Into The Nexus Docker Repo"
@@ -151,7 +174,7 @@ stages{
           
         }
     }
-
+*/
 
 stage('Stop and Remove the Docker Container'){
       steps{

@@ -91,7 +91,7 @@ pipeline {
         dopsemail = "devops@spantechnologyservices.com"
         devemail = "w9team@spantechnologyservices.com"
         //codeLocation = "/home/ubuntu/node/lead/Sprint/"
-        NEXUS_URL = "nexus.spanartifacts.spanllc.com"
+        NEXUS_URL = "spanartifacts.spanllc.com"
     }
 
 stages{

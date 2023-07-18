@@ -91,6 +91,7 @@ pipeline {
         dopsemail = "devops@spantechnologyservices.com"
         devemail = "w9team@spantechnologyservices.com"
         //codeLocation = "/home/ubuntu/node/lead/Sprint/"
+        NEXUS_URL = "nexus.spanartifacts.spanllc.com"
     }
 
 stages{
@@ -126,7 +127,31 @@ stages{
         }
     }
 
-   
+    stage('Nexus Login'){
+      steps{
+          echo "Logging Into The Nexus Docker Repo"
+        script{
+           withCredentials([usernamePassword(credentialsId: 'spanartifacts', usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASS')]) {
+           sh "echo \"${NEXUS_PASS}\" | docker login --username \"${NEXUS_USER}\" --password-stdin ${NEXUS_URL}"
+    }
+         }
+          
+        }
+    }
+
+
+
+    stage('Docker Push to Nexus'){
+      steps{
+        script{
+            sh "docker tag ${Application.toLowerCase()}:${tags} ${NEXUS_URL}/${Application.toLowerCase()}:${tags}"
+            sh "docker push ${NEXUS_URL}/${Application.toLowerCase()}:${tags}" 
+         }
+          
+        }
+    }
+
+
 stage('Stop and Remove the Docker Container'){
       steps{
         script{

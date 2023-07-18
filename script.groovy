@@ -12,5 +12,5 @@ def Push_To_Registry(){
     sh "docker push ${NEXUS_URL}/${Application.toLowerCase()}:${tags}" 
 }
 
-
+return this
 

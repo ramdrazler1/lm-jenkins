@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat
 def date = new Date()
 today = new SimpleDateFormat("ddMMyyyy")
 def COLOR_MAP = ['SUCCESS': '#00FF00', 'FAILURE': '#FF0000','UNSTABLE': '#FFFF00', 'ABORTED': '#800000']
+def gv
 
 properties([
     parameters([

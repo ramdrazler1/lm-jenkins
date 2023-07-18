@@ -135,13 +135,21 @@ stages{
           }
         }
 
-    stage('Run the Docker'){
-      steps{
-        script{
-            sh "sudo docker run -itd --name ${Application.toLowerCase()} -p 4005:4005 ${Application.toLowerCase()}:${tags}"
-         }
-          }
-        }
+stage('Run the Docker') {
+  steps {
+    script {
+      if ("${Application.toLowerCase()}" == "lead-management-api") {
+        sh "sudo docker run -itd --name ${Application.toLowerCase()} -p 4005:4005 ${Application.toLowerCase()}:${tags}"
+      } else if ("${Application.toLowerCase()}" == "lead-management-client") {
+        sh "sudo docker run -itd --name ${Application.toLowerCase()} -p 4006:4006 ${Application.toLowerCase()}:${tags}"
+      } else if ("${Application.toLowerCase()}" == "lead-management-user-portal") {
+        sh "sudo docker run -itd --name ${Application.toLowerCase()} -p 4007:4007 ${Application.toLowerCase()}:${tags}"
+      } else {
+        echo "Unknown application: ${Application.toLowerCase()}"
+      }
+    }
+  }
+}
     
 
     stage('Docker-List'){

@@ -111,9 +111,9 @@ stages{
     stage('.env copy'){
       steps{
         script{   
-        sh "cp -r /home/ubuntu/.envs/lead-mgmt/Sprint/lm-api-env  /home/ubuntu/jenkins-slave/workspace/DevOps/lm-test/lead-management-api/.env "
-        sh "cp -r /home/ubuntu/.envs/lead-mgmt/Sprint/lm-client-env  /home/ubuntu/jenkins-slave/workspace/DevOps/lm-test/lead-management-client/.env"
-        sh "cp -r /home/ubuntu/.envs/lead-mgmt/Sprint/lm-portal-env  /home/ubuntu/jenkins-slave/workspace/DevOps/lm-test/lead-management-user-portal/.env"    
+        sh "cp -r /home/ubuntu/.envs/lead-mgmt/Sprint/lm-api-env  /home/ubuntu/jenkins-slave/workspace/DevOps/lm-test/lm-test/lead-management-api/.env "
+        sh "cp -r /home/ubuntu/.envs/lead-mgmt/Sprint/lm-client-env  /home/ubuntu/jenkins-slave/workspace/DevOps/lm-test/lm-test/lead-management-client/.env"
+        sh "cp -r /home/ubuntu/.envs/lead-mgmt/Sprint/lm-portal-env  /home/ubuntu/jenkins-slave/workspace/DevOps/lm-test/lm-test/lead-management-user-portal/.env"    
        }
      }
     }

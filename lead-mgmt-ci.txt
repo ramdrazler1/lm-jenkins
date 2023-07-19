@@ -95,6 +95,7 @@ pipeline {
         NEXUS_URL = "spanartifacts.spanllc.com"
     }
 
+   stages{
    stage('Git Clone'){
       steps{
         script{

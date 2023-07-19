@@ -1,6 +1,6 @@
 def Docker_Registry_Login(){
     echo "Logging Into The Nexus Docker Repo"
-    withCredentials([usernamePassword(credentialsId: 'spanartifacts', usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASS')]) {
+    withCredentials([usernamePassword(credentialsId: 'spanartifacts1', usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASS')]) {
     sh "echo \"${NEXUS_PASS}\" | docker login --username \"${NEXUS_USER}\" --password-stdin ${NEXUS_URL}"          
     }
 }

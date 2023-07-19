@@ -8,7 +8,7 @@ import java.text.SimpleDateFormat
 def date = new Date()
 today = new SimpleDateFormat("ddMMyyyy")
 def COLOR_MAP = ['SUCCESS': '#00FF00', 'FAILURE': '#FF0000','UNSTABLE': '#FFFF00', 'ABORTED': '#800000']
-def gv
+
 
 properties([
     parameters([
@@ -95,15 +95,6 @@ pipeline {
         NEXUS_URL = "spanartifacts.spanllc.com"
     }
 
-stages{
-stage("Init"){
-      steps{
-        script{
-          gv = load "script.groovy"
-        }
-      }
-    }
-
    stage('Git Clone'){
       steps{
         script{
@@ -114,7 +105,6 @@ stage("Init"){
           }
      }
     }
-    
 
 
     stage('.env copy'){
@@ -127,6 +117,7 @@ stage("Init"){
      }
     }
 
+
     stage('Docker Build'){
       steps{
         script{
@@ -137,27 +128,12 @@ stage("Init"){
         }
     }
 
- stage("Docker_Registry_Login"){
-        steps{
-            script{
-                gv.Docker_Registry_Login()
-            }
-        }
-     }
-     stage("Push_To_Registry"){
-        steps{
-            script{
-                gv.Push_To_Registry()
-            }
-        }
-     }
 
-/*
     stage('Nexus Login'){
       steps{
           echo "Logging Into The Nexus Docker Repo"
         script{
-           withCredentials([usernamePassword(credentialsId: 'spanartifacts', usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASS')]) {
+           withCredentials([usernamePassword(credentialsId: 'spanartifacts1', usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASS')]) {
       //     sh "docker login --username ${NEXUS_USER} --password ${NEXUS_PASS} ${NEXUS_URL}"
              sh "echo ${NEXUS_PASS} | docker login --username ${NEXUS_USER} --password-stdin ${NEXUS_URL}"
     }
@@ -177,7 +153,7 @@ stage("Init"){
           
         }
     }
-*/
+
 
 stage('Stop and Remove the Docker Container'){
       steps{

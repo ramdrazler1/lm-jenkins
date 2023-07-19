@@ -104,7 +104,6 @@ stages{
             echo "${env.Trigger_Repo}','${env.Trigger_Branch}'"
             git credentialsId: 'githubDops', branch: "${env.Trigger_Branch}",  url: "${env.Trigger_Repo}"
           }
-}
      }
     }
 

@@ -95,18 +95,17 @@ pipeline {
         NEXUS_URL = "spanartifacts.spanllc.com"
     }
 
-   stages{
+stages{
    stage('Git Clone'){
       steps{
         script{
-          //r("${env.codeLocation}"){
+
             sh "pwd"
             echo "${env.Trigger_Repo}','${env.Trigger_Branch}'"
             git credentialsId: 'githubDops', branch: "${env.Trigger_Branch}",  url: "${env.Trigger_Repo}"
           }
      }
     }
-}
 
 
     stage('.env copy'){

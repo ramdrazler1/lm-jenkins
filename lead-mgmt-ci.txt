@@ -85,7 +85,11 @@ properties([
 pipeline {
     agent {
         label params.AGENT == "any" ? "" : params.AGENT 
+    }tools {
+        // Use the name you provided for Node.js in Global Tool Configuration
+        nodejs "nodejs-span"
     }
+
     environment{
         VERSION = "${env.BUILD_ID}"
         job = "${env.JOB_NAME}"
@@ -113,6 +117,7 @@ stage('Sonarqube') {
     }
     steps {
         withSonarQubeEnv('sonarqube') {
+            sh "node -v"
             sh "${scannerHome}/bin/sonar-scanner"
         }
 

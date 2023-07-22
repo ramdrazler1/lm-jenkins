@@ -85,7 +85,9 @@ properties([
 pipeline {
     agent {
         label params.AGENT == "any" ? "" : params.AGENT 
-    }tools {
+    }
+
+tools {
         // Use the name you provided for Node.js in Global Tool Configuration
         nodejs "nodejs-span"
     }

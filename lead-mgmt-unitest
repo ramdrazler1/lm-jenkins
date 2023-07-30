@@ -129,8 +129,8 @@ stages{
       steps{
         script{
             dir("${env.WORKSPACE}"){
-            sh "npm install"
-            sh "npm test"
+            sh "npm run dev"
+            sh "npm run test"
          }
           }
         }

@@ -129,7 +129,7 @@ stages{
       steps{
         script{
             dir("${env.WORKSPACE}"){
-            sh "npm run install"
+            sh "npm install"
             sh "npm run dev"
             sh "npm run test"
          }

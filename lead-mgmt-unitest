@@ -141,7 +141,7 @@ stages{
     stage('Docker Build'){
       steps{
         script{
-            dir("${env.WORKSPACE}"){
+            dir("${env.WORKSPACE}/${Application}"){
             sh "sudo docker build -t ${Application.toLowerCase()}:${tags} ./${Application} --no-cache"
          }
           }

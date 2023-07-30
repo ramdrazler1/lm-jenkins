@@ -128,7 +128,7 @@ stages{
     stage('Unit Testing'){
       steps{
         script{
-            dir("${env.WORKSPACE}"){
+            dir("${env.WORKSPACE}/${Application}"){
             sh "npm install"
             sh "npm run dev"
             sh "npm run test"
